@@ -1,0 +1,17 @@
+﻿{
+    tableNumber : 12,
+    ingredients : ['foo','bar','baz'],
+    lineItem : [
+        {
+            text : 'razor blade pizza',
+            qty : 4,
+            price : 9.99
+        }
+    ],
+    subTotal : 9.99,
+    tax : 1.99,
+    total : 11.98,
+    paid : false,
+    timeToCook: 300,
+    paymentMethod : 'card' 
+}
