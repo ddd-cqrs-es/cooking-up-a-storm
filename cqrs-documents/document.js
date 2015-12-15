@@ -1,9 +1,9 @@
-﻿{
+﻿var order = '{
     tableNumber : 12,
-    ingredients : ['foo','bar','baz'],
+    ingredients : ["foo","bar","baz"],
     lineItem : [
         {
-            text : 'razor blade pizza',
+            text : "razor blade pizza",
             qty : 4,
             price : 9.99
         }
@@ -13,5 +13,5 @@
     total : 11.98,
     paid : false,
     timeToCook: 300,
-    paymentMethod : 'card' 
-}
+    paymentMethod : "card" 
+}'

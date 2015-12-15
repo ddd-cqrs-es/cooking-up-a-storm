@@ -1,6 +1,6 @@
 namespace cqrs_documents
 {
-    public interface IHandlerOrder
+    public interface IHandleOrder
     {
         void Handle(Order order);
     }

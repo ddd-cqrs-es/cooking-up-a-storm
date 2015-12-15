@@ -26,13 +26,13 @@ namespace cqrs_documents.Specifications
         [Test]
         public void ShouldNotThrow()
         {
-            Assert.DoesNotThrow(() => new Order(_json));
+            Assert.DoesNotThrow(() => new JsonOrder(_json));
         }
 
         [Test]
         public void ShouldReadTax()
         {
-            var doc = new Order(_json);
+            var doc = new JsonOrder(_json);
 
             var tax = doc.tax;
 
@@ -42,10 +42,7 @@ namespace cqrs_documents.Specifications
         [Test]
         public void ShouldSetTax()
         {
-            var doc = new Order(_json)
-            {
-                tax = 10
-            };
+            var doc = new JsonOrder(_json) {tax = 10};
 
             Assert.That(doc.tax, Is.EqualTo(10));
         }
@@ -53,7 +50,7 @@ namespace cqrs_documents.Specifications
         [Test]
         public void ShouldReadPaymentMethod()
         {
-            var doc = new Order(_json);
+            var doc = new JsonOrder(_json);
 
             var paymentMethod = doc.paymentMethod;
 
@@ -64,4 +61,5 @@ namespace cqrs_documents.Specifications
         public void ShouldReadIngredients()
         {
         }
+    }
 }

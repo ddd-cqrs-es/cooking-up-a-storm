@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,7 +8,22 @@ using Newtonsoft.Json.Linq;
 
 namespace cqrs_documents
 {
+
     public class Order
+    {
+        public int tableNumber { get; set; }
+        public List<string> ingredients { get; set; } = new List<string>();
+        public List<LineItem> lineItems { get; set; } = new List<LineItem>();
+        public double subTotal { get; set; }
+        public double tax { get; set; }
+        public double total { get; set; }
+        public bool paid { get; set; }
+        public int timeToCook { get; set; }
+        public string paymentMethod { get; set; }
+    }
+
+
+    public class JsonOrder
     {
 
         private readonly JObject _json;
@@ -16,7 +32,7 @@ namespace cqrs_documents
             return _json.ToString(Formatting.Indented);
         }
 
-        public Order(string json)
+        public JsonOrder(string json)
         {
             _json = JObject.Parse(json);
         }
@@ -103,6 +119,11 @@ namespace cqrs_documents
         public IEnumerable<LineItem> GetLineItems()
         {
            return Enumerable.Empty<LineItem>();
+        }
+
+        public void AddIngredients(List<Tuple<string, double>> list)
+        {
+            throw new NotImplementedException();
         }
     }
 }

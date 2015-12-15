@@ -1,42 +1,36 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace cqrs_documents.Actors
 {
-    class Waiter
+    internal class Waiter
     {
-        private readonly IHandlerOrder _handler;
-        private readonly List<string> _dishes = new List<string>(   );
-        private IDictionary<short, Order> _map = new ConcurrentDictionary<short, Order>(); 
+        private readonly List<string> _dishes = new List<string>();
+        private readonly IHandleOrder _handler;
+        private readonly IMenuService _menuService;
 
-        public Waiter(IHandlerOrder handler)
+        public Waiter(IHandleOrder handler, IMenuService menuService)
         {
             _handler = handler;
+            _menuService = menuService;
         }
 
-        public void PlaceOrder(short tableNumber, params string[] descriptions)
+        public void PlaceOrder(int tableNumber, params string[] descriptions)
         {
-            if (_map.ContainsKey(tableNumber))
+            Console.WriteLine($"Waiter places order for table {tableNumber}");
+
+            var order = new Order();
+
+            foreach (var description in descriptions)
             {
-                foreach (var description in descriptions)
-                {
-                    if (_dishes.Contains(description))
-                    {
-                        _map[tableNumber].AddItem(description);
-                    }
-                    else
-                    {
-                        throw new Exception("frown, rub fingers together");
-                    }
-                   
-                }
+                order.lineItems.Add(new LineItem() {text = description});
             }
-            _handler.Handle(_map[tableNumber]);
+
+            _handler.Handle(order);
         }
     }
 
-    class Dish
+    internal class Dish
     {
         public Dish(string description, double price)
         {
