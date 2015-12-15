@@ -6,11 +6,13 @@ namespace cqrs_documents.Actors
     {
         private readonly IHandleOrder _handler;
         private readonly IMenuService _service;
+        private readonly Bus _bus;
 
-        public AssistantManager(IHandleOrder handler, IMenuService service)
+        public AssistantManager(IHandleOrder handler, IMenuService service, Bus bus)
         {
             _handler = handler;
             _service = service;
+            _bus = bus;
         }
 
         public void Handle(Order order)
@@ -27,7 +29,7 @@ namespace cqrs_documents.Actors
             order.tax = total*.2;
             order.total = total + order.tax;
 
-            _handler.Handle(order);
+            _bus.Publish(Bus.BillCalculated, order);
         }
     }
 }

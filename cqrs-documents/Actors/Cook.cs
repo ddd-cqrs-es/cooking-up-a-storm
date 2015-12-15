@@ -10,6 +10,7 @@ namespace cqrs_documents.Actors
         private readonly IHandleOrder _handler;
         private readonly string _name;
         private readonly int _delay;
+        private readonly Bus _bus;
 
         //private readonly IDictionary<string, List<Tuple<string, double>>> _recipes =
         //    new ConcurrentDictionary<string, List<Tuple<string, double>>>();
@@ -19,11 +20,12 @@ namespace cqrs_documents.Actors
             {"Sausages", new List<string>() {"piggies"}},
         };
 
-        public Cook(string name, IHandleOrder handler, int delay)
+        public Cook(string name, IHandleOrder handler, int delay, Bus bus)
         {
             _name = name;
             _handler = handler;
             _delay = delay;
+            _bus = bus;
         }
 
         public void Handle(Order order)
@@ -37,7 +39,8 @@ namespace cqrs_documents.Actors
                 order.ingredients.AddRange(ingredients);
             }
             Thread.Sleep(_delay);
-            _handler.Handle(order);
+
+            _bus.Publish(Bus.FoodCooked, order);
         }
     }
 }

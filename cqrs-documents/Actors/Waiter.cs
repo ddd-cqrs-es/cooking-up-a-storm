@@ -8,25 +8,27 @@ namespace cqrs_documents.Actors
         private readonly List<string> _dishes = new List<string>();
         private readonly IHandleOrder _handler;
         private readonly IMenuService _menuService;
+        private readonly Bus _bus;
 
-        public Waiter(IHandleOrder handler, IMenuService menuService)
+        public Waiter(IHandleOrder handler, IMenuService menuService, Bus bus)
         {
             _handler = handler;
             _menuService = menuService;
+            _bus = bus;
         }
 
-        public void PlaceOrder(int tableNumber, params string[] descriptions)
+        public void PlaceOrder(int sequence, params string[] descriptions)
         {
-            Console.WriteLine($"Waiter places order for table {tableNumber}");
+            Console.WriteLine($"Waiter places order for table {sequence}");
 
-            var order = new Order();
+            var order = new Order {expiry = DateTimeOffset.UtcNow.AddSeconds(2), tableNumber = sequence};
 
             foreach (var description in descriptions)
             {
                 order.lineItems.Add(new LineItem() {text = description});
             }
 
-            _handler.Handle(order);
+            _bus.Publish(Bus.OrderPlaced, order);
         }
     }
 
