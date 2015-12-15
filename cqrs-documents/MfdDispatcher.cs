@@ -1,53 +1,28 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
+using cqrs_documents.Events;
 
 namespace cqrs_documents
 {
-    class TtlHandler : IHandleOrder
+    class MfdDispatcher<T> : IHandle<T> where T : Message
     {
-        private readonly IHandleOrder _handler;
+        private readonly IEnumerable<ThreadedHandler<T>> _handlers;
 
-        public TtlHandler(IHandleOrder handler)
-        {
-            _handler = handler;
-        }
-
-        public void Handle(Order order)
-        {
-            var ttl = order as IHaveTtl;
-
-            if (ttl == null) return;
-
-            if (ttl.expiry > DateTimeOffset.UtcNow)
-                _handler.Handle(order);
-            else
-            {
-                Console.WriteLine($"Table {order.tableNumber} have left the restaurant");
-            }
-        }
-    }
-
-    class MfdDispatcher : IHandleOrder
-    {
-        private readonly IEnumerable<ThreadedHandleOrder> _handlers;
-
-        public MfdDispatcher(IEnumerable<ThreadedHandleOrder> handlers)
+        public MfdDispatcher(IEnumerable<ThreadedHandler<T>> handlers)
         {
             _handlers = handlers;
         }
 
-        public void Handle(Order order)
+        public void Handle(T message)
         {
             while (true)
             {
-                foreach (var threadedHandleOrder in _handlers)
+                foreach (var handler in _handlers)
                 {
-                    if (threadedHandleOrder.Count < 5)
-                    {
-                        threadedHandleOrder.Handle(order);
-                        return;
-                    }
+                    if (handler.Count >= 5) continue;
+
+                    handler.Handle(message);
+                    return;
                 }
                 Thread.Sleep(1);   
             }

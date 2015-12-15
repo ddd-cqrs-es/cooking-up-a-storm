@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using cqrs_documents.Events;
 
 namespace cqrs_documents
 {
@@ -14,25 +15,25 @@ namespace cqrs_documents
         void Stop();
     }
 
-    public class ThreadedHandleOrder : IStartable, IHandleOrder
+    public class ThreadedHandler<T> : IStartable, IHandle<T> where T: Message
     {
-        private readonly IHandleOrder _handler;
-        private readonly ConcurrentQueue<Order> _orderQueue = new ConcurrentQueue<Order>();
+        private readonly IHandle<T> _handler;
+        private readonly ConcurrentQueue<T> _messageQueue = new ConcurrentQueue<T>();
         private bool _stop;
 
-        public ThreadedHandleOrder(string name, IHandleOrder handler)
+        public ThreadedHandler(string name, IHandle<T> handler)
         {
             Name = name;
             _handler = handler;
         }
 
-        public void Handle(Order order)
+        public void Handle(T message)
         {
-            _orderQueue.Enqueue(order);
+            _messageQueue.Enqueue(message);
         }
 
         public string Name { get; }
-        public int Count => _orderQueue.Count;
+        public int Count => _messageQueue.Count;
 
         public void StartListening()
         {
@@ -40,14 +41,14 @@ namespace cqrs_documents
             {
                 while (!_stop)
                 {
-                    Order order;
-                    if (!_orderQueue.TryDequeue(out order))
+                    T message;
+                    if (!_messageQueue.TryDequeue(out message))
                     {
                         Thread.Sleep(1);
                         continue;
                     }
 
-                    _handler.Handle(order);
+                    _handler.Handle(message);
                 }
             },
                 TaskCreationOptions.LongRunning);

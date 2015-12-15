@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace cqrs_documents
 {
-    public class Order : IHaveTtl
+    public class Order
     {
         public int tableNumber { get; set; }
         public List<string> ingredients { get; set; } = new List<string>();
@@ -19,7 +19,6 @@ namespace cqrs_documents
         public bool paid { get; set; }
         public int timeToCook { get; set; }
         public string paymentMethod { get; set; }
-        public DateTimeOffset expiry { get; set; }
     }
 
     public interface IHaveTtl

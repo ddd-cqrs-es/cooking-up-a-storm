@@ -55,7 +55,14 @@
     <Compile Include="Actors\Cashier.cs" />
     <Compile Include="Actors\Cook.cs" />
     <Compile Include="Bus.cs" />
-    <Compile Include="IRoundRobinDispatcher.cs" />
+    <Compile Include="Commands\CookFood.cs" />
+    <Compile Include="Commands\TakePayment.cs" />
+    <Compile Include="Commands\PriceOrder.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="Events\OrderCooked.cs" />
+    <Compile Include="Events\OrderPaid.cs" />
+    <Compile Include="Events\OrderPlaced.cs" />
+    <Compile Include="Events\OrderPriced.cs" />
     <Compile Include="IMenuService.cs" />
     <Compile Include="IThreadedHandleOrder.cs" />
     <Compile Include="LineItem.cs" />
@@ -64,8 +71,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Specifications\when_document_created.cs" />
-    <Compile Include="IHandleOrder.cs" />
+    <Compile Include="IHandle.cs" />
     <Compile Include="Actors\Waiter.cs" />
+    <Compile Include="TtlHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

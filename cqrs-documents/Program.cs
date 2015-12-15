@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using cqrs_documents.Actors;
+using cqrs_documents.Commands;
+using cqrs_documents.Events;
 
 namespace cqrs_documents
 {
@@ -16,18 +18,18 @@ namespace cqrs_documents
 
             var bus = new Bus();
 
-            var cashier = new ThreadedHandleOrder("Cashier", new Cashier(bus));
-            var assistantManager = new ThreadedHandleOrder("Assistant Manager", new AssistantManager(cashier, new MenuService(), bus));
-            var cook1 = new ThreadedHandleOrder("Cook (Chewie)", new TtlHandler(new Cook("Chewie", assistantManager, 123, bus)));
-            var cook2 = new ThreadedHandleOrder("Cook (Luke)", new TtlHandler(new Cook("Luke", assistantManager, 456, bus)));
-            var cook3 = new ThreadedHandleOrder("Cook (Darth)", new TtlHandler(new Cook("Darth", assistantManager,217, bus)));
-            var mfdDispatcher = new MfdDispatcher(new[] {cook1, cook2, cook3});
-            var kitchen = new ThreadedHandleOrder("Kitchen", mfdDispatcher);
-            var waiter = new Waiter(kitchen, new MenuService(), bus);
+            var cashier = new ThreadedHandler<TakePayment>("Cashier", new Cashier(bus));
+            var assistantManager = new ThreadedHandler<PriceOrder>("Assistant Manager", new AssistantManager(new MenuService(), bus));
+            var cook1 = new ThreadedHandler<CookFood>("Cook (Chewie)", new TtlHandler<CookFood>(new Cook("Chewie", 123, bus)));
+            var cook2 = new ThreadedHandler<CookFood>("Cook (Luke)", new TtlHandler<CookFood>(new Cook("Luke", 456, bus)));
+            var cook3 = new ThreadedHandler<CookFood>("Cook (Darth)", new TtlHandler<CookFood>(new Cook("Darth",217, bus)));
+            var mfdDispatcher = new MfdDispatcher<CookFood>(new[] {cook1, cook2, cook3});
+            var kitchen = new ThreadedHandler<CookFood>("Kitchen", mfdDispatcher);
+            var waiter = new Waiter(new MenuService(), bus);
 
-            bus.Subscribe(cashier, Bus.BillCalculated);
-            bus.Subscribe(assistantManager, Bus.FoodCooked);
-            bus.Subscribe(kitchen, Bus.OrderPlaced);
+            bus.Subscribe(cashier);
+            bus.Subscribe(assistantManager);
+            bus.Subscribe(kitchen);
 
             startables.Add(cashier);
             startables.Add(assistantManager);

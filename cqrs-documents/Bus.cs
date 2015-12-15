@@ -1,32 +1,33 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using cqrs_documents.Events;
 
 namespace cqrs_documents
 {
     internal class Bus
     {
-        public const string BillCalculated = "BillCalculated";
-        public const string OrderPaid = "OrderPaid";
-        public const string FoodCooked = "FoodCooked";
-        public const string OrderPlaced = "OrderPlaced";
-
-        private readonly ConcurrentDictionary<string, IList<IHandleOrder>> _handlers =
-            new ConcurrentDictionary<string, IList<IHandleOrder>>();
+        private readonly ConcurrentDictionary<Type, IList<object>> _handlers =
+            new ConcurrentDictionary<Type, IList<object>>();
     
-        public void Publish(string operation, Order order)
+        public void Publish<T>(T message)
         {
-            foreach (var handler in _handlers[operation])
+            if (!_handlers.ContainsKey(typeof(T)))
+                return;
+
+            foreach (dynamic handler in _handlers[typeof(T)])
             {
-                handler.Handle(order);
+                handler.Handle(message);
             }
         }
 
-        public void Subscribe(IHandleOrder handler, string operation)
+        public void Subscribe<T>(IHandle<T> handler) where T : Message
         {
-            if (!_handlers.ContainsKey(operation))
-                _handlers[operation] = new List<IHandleOrder>();
+            var type = typeof(T);
+            if (!_handlers.ContainsKey(type))
+                _handlers[type] = new List<object>();
 
-            _handlers[operation].Add(handler);
+            _handlers[type].Add(handler);
         }
     }
 }

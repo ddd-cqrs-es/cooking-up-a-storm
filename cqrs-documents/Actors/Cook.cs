@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using cqrs_documents.Commands;
+using cqrs_documents.Events;
 
 namespace cqrs_documents.Actors
 {
-    internal class Cook : IHandleOrder
+    internal class Cook : IHandle<CookFood>
     {
-        private readonly IHandleOrder _handler;
         private readonly string _name;
         private readonly int _delay;
         private readonly Bus _bus;
@@ -20,16 +21,16 @@ namespace cqrs_documents.Actors
             {"Sausages", new List<string>() {"piggies"}},
         };
 
-        public Cook(string name, IHandleOrder handler, int delay, Bus bus)
+        public Cook(string name, int delay, Bus bus)
         {
             _name = name;
-            _handler = handler;
             _delay = delay;
             _bus = bus;
         }
 
-        public void Handle(Order order)
+        public void Handle(CookFood message)
         {
+            var order = message.Order;
             Console.WriteLine($"Cook ({_name}) handles order for table {order.tableNumber}");
 
             order.timeToCook = _delay;
@@ -40,7 +41,7 @@ namespace cqrs_documents.Actors
             }
             Thread.Sleep(_delay);
 
-            _bus.Publish(Bus.FoodCooked, order);
+            _bus.Publish(new OrderCooked(order));
         }
     }
 }

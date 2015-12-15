@@ -1,8 +1,10 @@
 ﻿using System;
+using cqrs_documents.Commands;
+using cqrs_documents.Events;
 
 namespace cqrs_documents.Actors
 {
-    class Cashier : IHandleOrder
+    class Cashier : IHandle<TakePayment>
     {
         private readonly Bus _bus;
 
@@ -11,13 +13,15 @@ namespace cqrs_documents.Actors
             _bus = bus;
         }
 
-        public void Handle(Order order)
+        public void Handle(TakePayment message)
         {
+            var order = message.Order;
+
             Console.WriteLine($"Cashier handles payment for table {order.tableNumber}");
 
             order.paid = true;
 
-            _bus.Publish(Bus.OrderPaid, order);
+            _bus.Publish(new OrderPaid(order));
         }
     }
 }

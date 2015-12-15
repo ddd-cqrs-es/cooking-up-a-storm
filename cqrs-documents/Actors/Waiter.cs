@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using cqrs_documents.Events;
 
 namespace cqrs_documents.Actors
 {
     internal class Waiter
     {
-        private readonly List<string> _dishes = new List<string>();
-        private readonly IHandleOrder _handler;
-        private readonly IMenuService _menuService;
         private readonly Bus _bus;
+        private readonly List<string> _dishes = new List<string>();
+        private readonly IMenuService _menuService;
 
-        public Waiter(IHandleOrder handler, IMenuService menuService, Bus bus)
+        public Waiter(IMenuService menuService, Bus bus)
         {
-            _handler = handler;
             _menuService = menuService;
             _bus = bus;
         }
@@ -21,14 +20,14 @@ namespace cqrs_documents.Actors
         {
             Console.WriteLine($"Waiter places order for table {sequence}");
 
-            var order = new Order {expiry = DateTimeOffset.UtcNow.AddSeconds(2), tableNumber = sequence};
+            var order = new Order {tableNumber = sequence};
 
             foreach (var description in descriptions)
             {
-                order.lineItems.Add(new LineItem() {text = description});
+                order.lineItems.Add(new LineItem {text = description});
             }
 
-            _bus.Publish(Bus.OrderPlaced, order);
+            _bus.Publish(new OrderPlaced(order) {expiry = DateTimeOffset.UtcNow.AddSeconds(2)});
         }
     }
 
