@@ -69,12 +69,4 @@ namespace cqrs_documents
             Console.ReadKey();
         }
     }
-
-    internal class MenuService : IMenuService
-    {
-        public int GetPrice(string description)
-        {
-            return 10;
-        }
-    }
 }

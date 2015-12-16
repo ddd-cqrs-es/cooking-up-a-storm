@@ -14,12 +14,11 @@ namespace cqrs_documents
 
         public void Handle(T message)
         {
-            var ttl = message as IHaveTtl;
-
-
-            if (null != ttl)
+            var ttlMessage = message as IHaveTtl;
+           
+            if (null != ttlMessage)
             {
-                if (ttl.expiry < DateTimeOffset.UtcNow)
+                if (ttlMessage.expiry < DateTimeOffset.UtcNow)
                 {
                     var orderPlaced = message as OrderPlaced;
                     if (orderPlaced == null) return;

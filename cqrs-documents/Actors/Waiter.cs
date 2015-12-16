@@ -30,16 +30,4 @@ namespace cqrs_documents.Actors
             _bus.Publish(new OrderPlaced(order) {expiry = DateTimeOffset.UtcNow.AddSeconds(2)});
         }
     }
-
-    internal class Dish
-    {
-        public Dish(string description, double price)
-        {
-            Description = description;
-            Price = price;
-        }
-
-        public string Description { get; private set; }
-        public double Price { get; private set; }
-    }
 }

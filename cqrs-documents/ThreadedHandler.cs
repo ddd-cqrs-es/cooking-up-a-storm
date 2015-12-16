@@ -6,16 +6,6 @@ using cqrs_documents.Events;
 
 namespace cqrs_documents
 {
-    public interface IStartable
-    {
-        string Name { get; }
-        int Count { get; }
-
-        void StartListening();
-
-        void Stop();
-    }
-
     public class ThreadedHandler<T> : IStartable, IHandle<T> where T: Message
     {
         private readonly IHandle<T> _handler;
