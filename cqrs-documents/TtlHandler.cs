@@ -16,16 +16,19 @@ namespace cqrs_documents
         {
             var ttl = message as IHaveTtl;
 
-            if (ttl == null) return;
 
-            if (ttl.expiry > DateTimeOffset.UtcNow)
-                _handler.Handle(message);
-            else
+            if (null != ttl)
             {
-                var orderPlaced = message as OrderPlaced;
-                if (orderPlaced == null) return;
-                Console.WriteLine($"Table {orderPlaced.Order.tableNumber} have left the restaurant");
+                if (ttl.expiry < DateTimeOffset.UtcNow)
+                {
+                    var orderPlaced = message as OrderPlaced;
+                    if (orderPlaced == null) return;
+                    Console.WriteLine($"Table {orderPlaced.Order.tableNumber} have left the restaurant");
+
+                    return;
+                }
             }
+            _handler.Handle(message);
         }
     }
 }

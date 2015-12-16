@@ -17,7 +17,7 @@ namespace cqrs_documents
             IList<IStartable> startables = new List<IStartable>();
 
             var bus = new Bus();
-
+            var router = new Router(bus);
             var cashier = new ThreadedHandler<TakePayment>("Cashier", new Cashier(bus));
             var assistantManager = new ThreadedHandler<PriceOrder>("Assistant Manager", new AssistantManager(new MenuService(), bus));
             var cook1 = new ThreadedHandler<CookFood>("Cook (Chewie)", new TtlHandler<CookFood>(new Cook("Chewie", 123, bus)));
@@ -30,6 +30,10 @@ namespace cqrs_documents
             bus.Subscribe(cashier);
             bus.Subscribe(assistantManager);
             bus.Subscribe(kitchen);
+
+            bus.Subscribe<OrderPlaced>(router);
+            bus.Subscribe<OrderCooked>(router);
+            bus.Subscribe<OrderPriced>(router);
 
             startables.Add(cashier);
             startables.Add(assistantManager);
