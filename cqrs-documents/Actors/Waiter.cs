@@ -27,7 +27,19 @@ namespace cqrs_documents.Actors
                 order.lineItems.Add(new LineItem {text = description});
             }
 
-            _bus.Publish(new OrderPlaced(order) {expiry = DateTimeOffset.UtcNow.AddSeconds(2)});
+            var correlationId = Guid.NewGuid();
+            var printer = new TableDisplay();
+
+            _bus.Subscribe<OrderPlaced>(printer, correlationId);
+            _bus.Subscribe<OrderCooked>(printer, correlationId);
+            _bus.Subscribe<OrderPriced>(printer, correlationId);
+            _bus.Subscribe<OrderPaid>(printer, correlationId);
+            
+            _bus.Publish(new OrderPlaced(order)
+            {
+                CorrelationId = correlationId,
+                expiry = DateTimeOffset.UtcNow.AddSeconds(2)
+            });
         }
     }
 }

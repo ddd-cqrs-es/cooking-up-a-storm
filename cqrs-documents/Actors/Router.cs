@@ -1,5 +1,4 @@
-﻿using System;
-using cqrs_documents.Commands;
+﻿using cqrs_documents.Commands;
 using cqrs_documents.Events;
 
 namespace cqrs_documents.Actors
@@ -15,17 +14,26 @@ namespace cqrs_documents.Actors
 
         public void Handle(OrderPlaced message)
         {
-            _bus.Publish(new CookFood(message.Order) {CorrelationId = Guid.NewGuid()});
+            var cookFood = new CookFood(message.Order) {CorrelationId = message.CorrelationId};
+            _bus.Publish(cookFood);
         }
 
         public void Handle(OrderCooked message)
         {
-            _bus.Publish(new PriceOrder(message.Order) {CorrelationId = message.CorrelationId,CausationId = message.MessageId});
+            _bus.Publish(new PriceOrder(message.Order)
+            {
+                CorrelationId = message.CorrelationId,
+                CausationId = message.MessageId
+            });
         }
 
         public void Handle(OrderPriced message)
         {
-            _bus.Publish(new TakePayment(message.Order) { CorrelationId = message.CorrelationId, CausationId = message.MessageId });
+            _bus.Publish(new TakePayment(message.Order)
+            {
+                CorrelationId = message.CorrelationId,
+                CausationId = message.MessageId
+            });
         }
     }
 }

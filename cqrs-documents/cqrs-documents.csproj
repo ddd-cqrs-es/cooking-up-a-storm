@@ -56,6 +56,7 @@
     <Compile Include="Actors\Cook.cs" />
     <Compile Include="Actors\Dish.cs" />
     <Compile Include="Actors\Router.cs" />
+    <Compile Include="Actors\TableDisplay.cs" />
     <Compile Include="Bus.cs" />
     <Compile Include="Commands\CookFood.cs" />
     <Compile Include="Commands\TakePayment.cs" />
