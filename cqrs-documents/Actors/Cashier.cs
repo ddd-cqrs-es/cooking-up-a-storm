@@ -21,7 +21,7 @@ namespace cqrs_documents.Actors
 
             order.paid = true;
 
-            _bus.Publish(new OrderPaid(order));
+            _bus.Publish(new OrderPaid(order) { CorrelationId = message.CorrelationId, CausationId = message.MessageId });
         }
     }
 }

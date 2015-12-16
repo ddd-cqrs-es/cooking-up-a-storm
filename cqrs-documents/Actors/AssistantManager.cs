@@ -30,7 +30,7 @@ namespace cqrs_documents.Actors
             order.tax = total*.2;
             order.total = total + order.tax;
 
-            _bus.Publish(new OrderPriced(order));
+            _bus.Publish(new OrderPriced(order) {CorrelationId = message.CorrelationId, CausationId = message.MessageId});
         }
     }
 }

@@ -41,7 +41,7 @@ namespace cqrs_documents.Actors
             }
             Thread.Sleep(_delay);
 
-            _bus.Publish(new OrderCooked(order));
+            _bus.Publish(new OrderCooked(order) { CorrelationId = message.CorrelationId, CausationId = message.MessageId });
         }
     }
 }
