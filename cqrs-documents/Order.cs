@@ -14,5 +14,6 @@ namespace cqrs_documents
         public bool paid { get; set; }
         public int timeToCook { get; set; }
         public string paymentMethod { get; set; }
+        public bool dodgyCustomer { get; set; }
     }
 }

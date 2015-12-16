@@ -17,12 +17,15 @@ namespace cqrs_documents
             IList<IStartable> startables = new List<IStartable>();
 
             var bus = new Bus();
-            var router = new Router(bus);
             var cashier = new ThreadedHandler<TakePayment>("Cashier", new Cashier(bus));
-            var assistantManager = new ThreadedHandler<PriceOrder>("Assistant Manager", new AssistantManager(new MenuService(), bus));
-            var cook1 = new ThreadedHandler<CookFood>("Cook (Chewie)", new TtlHandler<CookFood>(new Cook("Chewie", 123, bus)));
-            var cook2 = new ThreadedHandler<CookFood>("Cook (Luke)", new TtlHandler<CookFood>(new Cook("Luke", 456, bus)));
-            var cook3 = new ThreadedHandler<CookFood>("Cook (Darth)", new TtlHandler<CookFood>(new Cook("Darth",217, bus)));
+            var assistantManager = new ThreadedHandler<PriceOrder>("Assistant Manager",
+                new AssistantManager(new MenuService(), bus));
+            var cook1 = new ThreadedHandler<CookFood>("Cook (Chewie)",
+                new TtlHandler<CookFood>(new Cook("Chewie", 123, bus)));
+            var cook2 = new ThreadedHandler<CookFood>("Cook (Luke)",
+                new TtlHandler<CookFood>(new Cook("Luke", 456, bus)));
+            var cook3 = new ThreadedHandler<CookFood>("Cook (Darth)",
+                new TtlHandler<CookFood>(new Cook("Darth", 217, bus)));
             var mfdDispatcher = new MfdDispatcher<CookFood>(new[] {cook1, cook2, cook3});
             var kitchen = new ThreadedHandler<CookFood>("Kitchen", mfdDispatcher);
             var waiter = new Waiter(new MenuService(), bus);
@@ -31,9 +34,9 @@ namespace cqrs_documents
             bus.Subscribe(assistantManager);
             bus.Subscribe(kitchen);
 
-            bus.Subscribe<OrderPlaced>(router);
-            bus.Subscribe<OrderCooked>(router);
-            bus.Subscribe<OrderPriced>(router);
+            var house = new ProcessManagerHouse(bus);
+            bus.Subscribe<OrderPlaced>(house);
+            bus.Subscribe<OrderPaid>(house);
 
             startables.Add(cashier);
             startables.Add(assistantManager);
@@ -63,9 +66,10 @@ namespace cqrs_documents
 
             for (var i = 0; i < 100; i++)
             {
-                waiter.PlaceOrder(i, "Sausages", "Beans");
-                Thread.Sleep(5);
+                var isDodgy = i%2 == 0;
+                waiter.PlaceOrder(i, isDodgy, "Sausages", "Beans");
             }
+
             Console.ReadKey();
         }
     }

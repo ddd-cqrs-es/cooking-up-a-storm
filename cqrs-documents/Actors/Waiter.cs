@@ -16,11 +16,11 @@ namespace cqrs_documents.Actors
             _bus = bus;
         }
 
-        public void PlaceOrder(int sequence, params string[] descriptions)
+        public void PlaceOrder(int sequence,bool isDodgy, params string[] descriptions)
         {
             Console.WriteLine($"Waiter places order for table {sequence}");
 
-            var order = new Order {tableNumber = sequence};
+            var order = new Order {tableNumber = sequence, dodgyCustomer = isDodgy};
 
             foreach (var description in descriptions)
             {
@@ -28,12 +28,6 @@ namespace cqrs_documents.Actors
             }
 
             var correlationId = Guid.NewGuid();
-            var printer = new TableDisplay();
-
-            _bus.Subscribe<OrderPlaced>(printer, correlationId);
-            _bus.Subscribe<OrderCooked>(printer, correlationId);
-            _bus.Subscribe<OrderPriced>(printer, correlationId);
-            _bus.Subscribe<OrderPaid>(printer, correlationId);
             
             _bus.Publish(new OrderPlaced(order)
             {
