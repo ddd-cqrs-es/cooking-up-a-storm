@@ -38,12 +38,18 @@ namespace cqrs_documents
             bus.Subscribe<OrderPlaced>(house);
             bus.Subscribe<OrderPaid>(house);
 
+            var alarmClock = new AlarmClock(bus);
+            bus.Subscribe(alarmClock);
+
             startables.Add(cashier);
             startables.Add(assistantManager);
             startables.Add(cook1);
             startables.Add(cook2);
             startables.Add(cook3);
             startables.Add(kitchen);
+
+
+            startables.Add(alarmClock);
 
             foreach (var startable in startables)
             {
@@ -66,7 +72,7 @@ namespace cqrs_documents
 
             for (var i = 0; i < 100; i++)
             {
-                var isDodgy = i%2 == 0;
+                var isDodgy = false;//i%2 == 0;
                 waiter.PlaceOrder(i, isDodgy, "Sausages", "Beans");
             }
 

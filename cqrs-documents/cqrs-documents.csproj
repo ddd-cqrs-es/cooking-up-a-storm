@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\AlarmClock.cs" />
     <Compile Include="Actors\AssistantManager.cs" />
     <Compile Include="Actors\Cashier.cs" />
     <Compile Include="Actors\Cook.cs" />
@@ -61,6 +62,10 @@
     <Compile Include="Commands\CookFood.cs" />
     <Compile Include="Commands\TakePayment.cs" />
     <Compile Include="Commands\PriceOrder.cs" />
+    <Compile Include="Events\CookFailed.cs" />
+    <Compile Include="Events\DelayedPublish.cs" />
+    <Compile Include="DodgyProcess.cs" />
+    <Compile Include="Events\CookOrderTimedOut.cs" />
     <Compile Include="IBus.cs" />
     <Compile Include="IHaveTtl.cs" />
     <Compile Include="IProcessManager.cs" />
@@ -74,7 +79,10 @@
     <Compile Include="Events\OrderPlaced.cs" />
     <Compile Include="Events\OrderPriced.cs" />
     <Compile Include="IMenuService.cs" />
+    <Compile Include="MockBus.cs" />
     <Compile Include="ProcessManagerHouse.cs" />
+    <Compile Include="Specifications\when_cook_times_out.cs" />
+    <Compile Include="Specifications\when_dodgy_customer_places_order.cs" />
     <Compile Include="ThreadedHandler.cs" />
     <Compile Include="LineItem.cs" />
     <Compile Include="MfdDispatcher.cs" />
