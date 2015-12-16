@@ -14,7 +14,7 @@ namespace cqrs_documents
             _bus = bus;
         }
 
-        public void Handle(OrderPlaced message)
+        public void Handle(OrderPlaced message) 
         {
             var cookFood = new CookFood(message.Order)
             {
